@@ -6,25 +6,41 @@ import com.frameworkium.core.ui.capture.model.Command;
 import com.frameworkium.core.ui.capture.model.message.CreateExecution;
 import com.frameworkium.core.ui.capture.model.message.CreateScreenshot;
 import com.frameworkium.core.ui.driver.DriverSetup;
+import com.googlecode.pngtastic.core.PngImage;
+import com.googlecode.pngtastic.core.PngOptimizer;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.*;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 
-import java.net.*;
-import java.util.concurrent.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.Base64;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static com.frameworkium.core.common.properties.Property.*;
 import static org.apache.http.HttpStatus.SC_CREATED;
 
-/** Takes and sends screenshots to "Capture" asynchronously. */
+/**
+ * Takes and sends screenshots to "Capture" asynchronously.
+ */
 public class ScreenshotCapture {
 
     private static final Logger logger = LogManager.getLogger();
 
-    /** Shared Executor for async sending of screenshot messages to capture. */
+    /**
+     * Shared Executor for async sending of screenshot messages to capture.
+     */
     private static final ExecutorService executorService =
             Executors.newFixedThreadPool(4);
 
@@ -133,7 +149,19 @@ public class ScreenshotCapture {
     }
 
     private String getBase64Screenshot(TakesScreenshot driver) {
-        return driver.getScreenshotAs(OutputType.BASE64);
+        return compressPng(driver.getScreenshotAs(OutputType.BYTES)).orElse("");
+    }
+
+    private Optional<String> compressPng(byte[] screenshotAsPng) {
+        PngImage pngImage = new PngImage(screenshotAsPng);
+        try {
+            Integer compressionLevel = 5; // 1 is fastest, 9 is best compression
+            byte[] imageData = new PngOptimizer().optimize(pngImage, true, compressionLevel).getImageData();
+            String base64Image = Base64.getEncoder().encodeToString(imageData);
+            return Optional.of(base64Image);
+        } catch (IOException e) {
+            return Optional.empty();
+        }
     }
 
     private void addScreenshotToSendQueue(CreateScreenshot createScreenshotMessage) {
@@ -145,7 +173,6 @@ public class ScreenshotCapture {
         try {
             getRequestSpec()
                     .body(createScreenshotMessage)
-                    .when()
                     .post(CaptureEndpoint.SCREENSHOT.getUrl())
                     .then()
                     .assertThat().statusCode(SC_CREATED);
@@ -156,7 +183,9 @@ public class ScreenshotCapture {
         }
     }
 
-    /** Waits up to 2 minutes to send any remaining Screenshot messages. */
+    /**
+     * Waits up to 2 minutes to send any remaining Screenshot messages.
+     */
     public static void processRemainingBacklog() {
 
         executorService.shutdown();
@@ -173,8 +202,7 @@ public class ScreenshotCapture {
             throw new IllegalStateException(e);
         }
         if (timeout) {
-            logger.error("Shutdown timed out. "
-                    + "Some screenshots might not have been sent.");
+            logger.error("Shutdown timed out. Some screenshots might not have been sent.");
         } else {
             logger.info("Finished processing backlog.");
         }
