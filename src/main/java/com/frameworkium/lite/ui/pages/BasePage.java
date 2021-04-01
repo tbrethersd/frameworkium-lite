@@ -20,14 +20,14 @@ public abstract class BasePage<T extends BasePage<T>> {
     protected Wait<WebDriver> wait;
     private Visibility visibility;
 
-    public BasePage() {
+    protected BasePage() {
         this(UITestLifecycle.get().getWebDriver(), UITestLifecycle.get().getWait());
     }
 
     /**
      * Added to enable testing and, one day, remove coupling to BaseUITest.
      */
-    public BasePage(WebDriver driver, Wait<WebDriver> wait) {
+    protected BasePage(WebDriver driver, Wait<WebDriver> wait) {
         this.driver = driver;
         this.wait = wait;
         JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
@@ -162,40 +162,14 @@ public abstract class BasePage<T extends BasePage<T>> {
      * @see JavascriptExecutor#executeScript(String, Object...)
      */
     protected Object executeJS(String javascript, Object... objects) {
-        Object returnObj = null;
         JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
         try {
-            returnObj = jsExecutor.executeScript(javascript, objects);
+            return jsExecutor.executeScript(javascript, objects);
         } catch (Exception e) {
-            logger.error("Javascript execution failed!");
-            logger.debug("Failed Javascript:" + javascript, e);
+            logger.error("Javascript execution failed!", e);
+            logger.debug("Failed Javascript: {}", javascript, e);
+            throw e;
         }
-        return returnObj;
-    }
-
-    /**
-     * Execute an asynchronous piece of JavaScript in the context of the
-     * currently selected frame or window. Unlike executing synchronous
-     * JavaScript, scripts executed with this method must explicitly signal they
-     * are finished by invoking the provided callback. This callback is always
-     * injected into the executed function as the last argument.
-     *
-     * <p>If executeAsyncScript throws an Exception it's caught and logged.
-     *
-     * @param javascript the JavaScript code to execute
-     * @return One of Boolean, Long, String, List, WebElement, or null.
-     * @see JavascriptExecutor#executeAsyncScript(String, Object...)
-     */
-    protected Object executeAsyncJS(String javascript, Object... objects) {
-        Object returnObj = null;
-        try {
-            JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-            returnObj = jsExecutor.executeAsyncScript(javascript, objects);
-        } catch (Exception e) {
-            logger.error("Async Javascript execution failed!");
-            logger.debug("Failed Javascript:\n" + javascript, e);
-        }
-        return returnObj;
     }
 
     /**
