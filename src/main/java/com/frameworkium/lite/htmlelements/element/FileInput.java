@@ -61,9 +61,8 @@ public class FileInput extends TypifiedElement {
 
     private void setLocalFileDetectorIfRequired() {
         if (Property.GRID_URL.isSpecified()) {
-            WebDriver webDriver = UITestLifecycle.get().getWebDriver();
-            EventFiringWebDriver efDriver = (EventFiringWebDriver) webDriver;
-            RemoteWebDriver remoteDriver = (RemoteWebDriver) efDriver.getWrappedDriver();
+            var webDriver = UITestLifecycle.get().getWebDriver();
+            var remoteDriver = (RemoteWebDriver) webDriver;
             remoteDriver.setFileDetector(new LocalFileDetector());
         }
     }
@@ -73,14 +72,6 @@ public class FileInput extends TypifiedElement {
      */
     public void submit() {
         getWrappedElement().submit();
-    }
-
-    private WebElement getNotProxiedInputElement() {
-        return getWrappedElement().findElement(By.xpath("."));
-    }
-
-    private void setLocalFileDetector(RemoteWebElement element) {
-        element.setFileDetector(new LocalFileDetector());
     }
 
     private String getFilePath(final String fileName) {
