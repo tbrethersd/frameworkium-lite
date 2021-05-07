@@ -7,7 +7,8 @@ import com.frameworkium.lite.ui.capture.ScreenshotCapture;
 import com.frameworkium.lite.ui.capture.model.Command;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.*;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Wait;
 
 import java.time.Duration;
@@ -30,8 +31,7 @@ public abstract class BasePage<T extends BasePage<T>> {
     protected BasePage(WebDriver driver, Wait<WebDriver> wait) {
         this.driver = driver;
         this.wait = wait;
-        var javascriptExecutor = (JavascriptExecutor) driver;
-        this.visibility = new Visibility(wait, javascriptExecutor);
+        this.visibility = new Visibility(wait);
     }
 
     /**
@@ -126,8 +126,7 @@ public abstract class BasePage<T extends BasePage<T>> {
 
     private void updatePageTimeout(Duration timeout) {
         wait = UITestLifecycle.get().newWaitWithTimeout(timeout);
-        var jsExecutor = (JavascriptExecutor) driver;
-        visibility = new Visibility(wait, jsExecutor);
+        visibility = new Visibility(wait);
     }
 
     private void takePageLoadedScreenshotAndSendToCapture() {
@@ -160,15 +159,6 @@ public abstract class BasePage<T extends BasePage<T>> {
             logger.debug("Failed Javascript: {}", javascript, e);
             throw e;
         }
-    }
-
-    /**
-     * Convenience method for {@link Visibility#forceVisible(WebElement)}.
-     *
-     * @param element the {@link WebElement} to "force visible" via Javascript.
-     */
-    protected void forceVisible(WebElement element) {
-        visibility.forceVisible(element);
     }
 
 }

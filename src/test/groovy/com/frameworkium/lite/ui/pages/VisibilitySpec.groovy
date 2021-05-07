@@ -28,7 +28,7 @@ class VisibilitySpec extends Specification {
     def mockJsEx = Mock(JavascriptExecutor)
     WebDriver mockDriver = Mock(EventFiringWebDriver, constructorArgs: [Mock(WebDriver)])
 
-    def sut = new Visibility(wait, mockJsEx)
+    def sut = new Visibility(wait)
 
     // methods that create new Mocks each time
 
@@ -99,34 +99,6 @@ class VisibilitySpec extends Specification {
             sut.waitForAnnotatedElementVisibility(pageObject)
         then: "Wait times out if element is displayed"
             1 * pageObject.invisibleTextInput.isDisplayed() >> true
-            thrown(TimeoutException)
-    }
-
-    def "Wait for Single visible @ForceVisible Element to be displayed"() {
-
-        given: "A page object with @ForceVisible element field"
-            def pageObject = new PageObjects.SingleForceVisibleElement(mockDriver, wait)
-
-        when:
-            pageObject.forceVisibleElement = newVisibleElement()
-            sut.waitForAnnotatedElementVisibility(pageObject)
-        then: "forces visible with JS"
-            1 * mockJsEx.executeScript(_ as String, _ as WebElement)
-        then: "wait is successful when element is displayed"
-            notThrown(Exception)
-    }
-
-    def "Wait for Single invisible @ForceVisible Element to be displayed"() {
-
-        given: "A page object with @ForceVisible element field"
-            def pageObject = new PageObjects.SingleForceVisibleElement(mockDriver, wait)
-
-        when:
-            pageObject.forceVisibleElement = newInvisibleElement()
-            sut.waitForAnnotatedElementVisibility(pageObject)
-        then: "forces visible with JS"
-            1 * mockJsEx.executeScript(_ as String, _ as WebElement)
-        then: "wait times out when element is not displayed"
             thrown(TimeoutException)
     }
 

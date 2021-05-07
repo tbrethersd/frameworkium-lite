@@ -6,9 +6,9 @@ import org.openqa.selenium.Keys;
 import org.testng.annotations.Test;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Test
@@ -16,7 +16,7 @@ public class TheInternetExampleTests extends BaseUITest {
 
     public void check_boxes_can_all_be_checked() {
 
-        final int timeout = 15;
+        var timeout = 15;
         Stream<Boolean> checkboxesStatus =
                 WelcomePage.open(timeout)
                         .clickCheckboxesLink()
@@ -29,7 +29,7 @@ public class TheInternetExampleTests extends BaseUITest {
 
     public void dragAndDrop() {
 
-        List<String> headings = WelcomePage.open()
+        var headings = WelcomePage.open()
                 .clickDragAndDropLink()
                 .dragAontoB()
                 .getListOfHeadings();
@@ -49,8 +49,7 @@ public class TheInternetExampleTests extends BaseUITest {
     }
 
     public void dropdowns() {
-        var dropDownPage = WelcomePage.open()
-                .clickDropDownLink();
+        var dropDownPage = WelcomePage.open().clickDropDownLink();
 
         assertThat(dropDownPage.getAllOptions())
                 .isEqualTo(List.of("Please select an option", "Option 1", "Option 2"));
@@ -61,12 +60,8 @@ public class TheInternetExampleTests extends BaseUITest {
     }
 
     public void hovers() {
-
-        String firstFigureCaption = WelcomePage.open()
-                .clickHoversLink()
-                .getFirstFigureCaption();
-
-        assertThat(firstFigureCaption).contains("name: user1");
+        assertThat(HoversPage.open().getFirstFigureCaption())
+                .contains("name: user1");
     }
 
     public void javascriptAlerts() {
@@ -93,15 +88,15 @@ public class TheInternetExampleTests extends BaseUITest {
 
     public void sortDataTable() {
 
-        SortableDataTablesPage tablesPage = SortableDataTablesPage.open();
+        var tablesPage = SortableDataTablesPage.open();
 
         assertThat(tablesPage.getTable1ColumnContents("Web Site"))
                 .contains("http://www.jdoe.com");
 
-        List<String> sortedLastNameColumn =
+        var sortedLastNameColumn =
                 tablesPage.sortTable2ByColumnName("Last Name")
                         .getTable2ColumnContents("Last Name")
-                        .collect(Collectors.toList());
+                        .collect(toList());
 
         assertThat(sortedLastNameColumn.get(0)).isEqualTo("Bach");
         assertThat(sortedLastNameColumn).isSorted();

@@ -1,6 +1,5 @@
 package com.frameworkium.integration.theinternet.pages;
 
-import com.frameworkium.lite.ui.annotations.ForceVisible;
 import com.frameworkium.lite.ui.annotations.Visible;
 import com.frameworkium.lite.ui.pages.BasePage;
 import com.frameworkium.lite.ui.pages.PageFactory;
@@ -19,8 +18,6 @@ public class WelcomePage extends BasePage<WelcomePage> {
     @FindBy(linkText = "Checkboxes")
     private Link checkboxesLink;
 
-    // ForceVisible not strictly required, just testing it doesn't error
-    @ForceVisible
     @FindBy(linkText = "Drag and Drop")
     private Link dragAndDropLink;
 
@@ -59,11 +56,6 @@ public class WelcomePage extends BasePage<WelcomePage> {
     public DragAndDropPage clickDragAndDropLink() {
         dragAndDropLink.click();
         return PageFactory.newInstance(DragAndDropPage.class);
-    }
-
-    public HoversPage clickHoversLink() {
-        hoversLink.click();
-        return PageFactory.newInstance(HoversPage.class);
     }
 
     public DropDownPage clickDropDownLink() {

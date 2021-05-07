@@ -12,9 +12,6 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
 public class SeleniumDownloadPage extends BasePage<SeleniumDownloadPage> {
 
     @Visible
-    private HeaderComponent header;
-
-    @Visible
     @FindBy(css = "body > div.split-section.container.dark-background > div.right > p:nth-child(1) > a")
     private Link latestDownloadLink;
 
@@ -25,18 +22,6 @@ public class SeleniumDownloadPage extends BasePage<SeleniumDownloadPage> {
 
     public String getLatestVersion() {
         return latestDownloadLink.getText();
-    }
-
-    public SeleniumDownloadPage hideContent() {
-        executeJS("arguments[0].style.visibility='hidden';", latestDownloadLink);
-        wait.until(ExpectedConditions.not(visibilityOf(latestDownloadLink)));
-        return this;
-    }
-
-    public SeleniumDownloadPage forceVisibleContent() {
-        // ensure force visible works
-        forceVisible(latestDownloadLink);
-        return this;
     }
 
     public void waitForContent() {
