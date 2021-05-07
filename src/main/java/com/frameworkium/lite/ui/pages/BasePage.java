@@ -30,7 +30,7 @@ public abstract class BasePage<T extends BasePage<T>> {
     protected BasePage(WebDriver driver, Wait<WebDriver> wait) {
         this.driver = driver;
         this.wait = wait;
-        JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+        var javascriptExecutor = (JavascriptExecutor) driver;
         this.visibility = new Visibility(wait, javascriptExecutor);
     }
 
@@ -126,7 +126,7 @@ public abstract class BasePage<T extends BasePage<T>> {
 
     private void updatePageTimeout(Duration timeout) {
         wait = UITestLifecycle.get().newWaitWithTimeout(timeout);
-        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        var jsExecutor = (JavascriptExecutor) driver;
         visibility = new Visibility(wait, jsExecutor);
     }
 
@@ -134,8 +134,8 @@ public abstract class BasePage<T extends BasePage<T>> {
         if (ScreenshotCapture.isRequired()) {
             Command pageLoadCommand = new Command(
                     "load", "page", getSimplePageObjectName());
-            UITestLifecycle.get().getCapture().takeAndSendScreenshot(
-                    pageLoadCommand, driver);
+            UITestLifecycle.get().getCapture()
+                    .takeAndSendScreenshot(pageLoadCommand, driver);
         }
     }
 
@@ -146,23 +146,13 @@ public abstract class BasePage<T extends BasePage<T>> {
                 + getClass().getSimpleName();
     }
 
-    /** Get title of the web page. */
-    public String getTitle() {
-        return driver.getTitle();
-    }
-
-    /** Get page source code of the current page. */
-    public String getSource() {
-        return driver.getPageSource();
-    }
-
     /**
      * @param javascript the Javascript to execute on the current page
      * @return One of Boolean, Long, String, List or WebElement. Or null.
      * @see JavascriptExecutor#executeScript(String, Object...)
      */
     protected Object executeJS(String javascript, Object... objects) {
-        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        var jsExecutor = (JavascriptExecutor) driver;
         try {
             return jsExecutor.executeScript(javascript, objects);
         } catch (Exception e) {
