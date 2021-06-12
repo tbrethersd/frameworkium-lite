@@ -59,8 +59,7 @@ public class TheInternetExampleTests extends BaseUITest {
         assertThat(dropDownPage.getCurrentSelection()).isEqualTo("Option 1");
     }
 
-    // disabled due to problem with our WebElement proxies and Actions
-    @Test(enabled = false)
+    @Test
     public void hovers() {
         assertThat(HoversPage.open().getFirstFigureCaption())
                 .contains("name: user1");
