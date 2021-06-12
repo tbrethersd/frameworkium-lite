@@ -27,7 +27,7 @@ public class TheInternetExampleTests extends BaseUITest {
         assertThat(checkboxesStatus).doesNotContain(false);
     }
 
-    public void dragAndDrop() {
+    public void drag_and_drop() {
 
         var headings = WelcomePage.open()
                 .clickDragAndDropLink()
@@ -37,7 +37,7 @@ public class TheInternetExampleTests extends BaseUITest {
         assertThat(headings).containsExactly("B", "A");
     }
 
-    public void dynamicLoading() {
+    public void dynamic_loading() {
 
         String elementText =
                 DynamicLoadingExamplePage
@@ -53,19 +53,28 @@ public class TheInternetExampleTests extends BaseUITest {
 
         assertThat(dropDownPage.getAllOptions())
                 .isEqualTo(List.of("Please select an option", "Option 1", "Option 2"));
-
         dropDownPage.select("Option 1");
 
         assertThat(dropDownPage.getCurrentSelection()).isEqualTo("Option 1");
     }
 
-    @Test
+    public void file_upload() {
+
+        var uploadedFileName = FileUploadPage.open()
+                .upload("upload.txt")
+                .getUploadedFileNames();
+
+        assertThat(uploadedFileName).isEqualTo("upload.txt");
+    }
+
+    // disabled due to problem with our WebElement proxies and Actions
+    @Test(enabled = false)
     public void hovers() {
         assertThat(HoversPage.open().getFirstFigureCaption())
                 .contains("name: user1");
     }
 
-    public void javascriptAlerts() {
+    public void javascript_alerts() {
 
         JavaScriptAlertsPage javascriptAlerts =
                 WelcomePage.open()
@@ -87,7 +96,7 @@ public class TheInternetExampleTests extends BaseUITest {
                 .isEqualTo("You entered: " + Keys.ENTER.name());
     }
 
-    public void sortDataTable() {
+    public void sort_data_table() {
 
         var tablesPage = SortableDataTablesPage.open();
 
