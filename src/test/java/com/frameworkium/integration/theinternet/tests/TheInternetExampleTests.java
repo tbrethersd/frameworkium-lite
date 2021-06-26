@@ -16,14 +16,16 @@ public class TheInternetExampleTests extends BaseUITest {
 
     public void check_boxes_can_all_be_checked() {
 
-        var timeout = 15;
-        Stream<Boolean> checkboxesStatus =
+        int timeout = 15;
+        List<Boolean> checkboxesStatus =
                 WelcomePage.open(timeout)
                         .clickCheckboxesLink()
                         .checkAllCheckboxes()
-                        .getAllCheckboxCheckedStatus();
+                        .getAllCheckboxCheckedStatus()
+                        .collect(toList());
 
         // Assert that all checkboxes are checked
+        assertThat(checkboxesStatus).isNotEmpty();
         assertThat(checkboxesStatus).doesNotContain(false);
     }
 
@@ -76,7 +78,7 @@ public class TheInternetExampleTests extends BaseUITest {
 
     public void javascript_alerts() {
 
-        JavaScriptAlertsPage javascriptAlerts =
+        var javascriptAlerts =
                 WelcomePage.open()
                         .clickJavascriptAlertsLink()
                         .clickAlertButtonAndAccept();
@@ -87,7 +89,7 @@ public class TheInternetExampleTests extends BaseUITest {
 
     public void keypresses() {
 
-        KeyPressesPage keyPressesPage = WelcomePage
+        var keyPressesPage = WelcomePage
                 .open()
                 .clickKeyPressesLink()
                 .enterKeyPress(Keys.ENTER);

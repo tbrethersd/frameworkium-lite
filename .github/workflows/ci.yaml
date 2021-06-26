@@ -50,7 +50,7 @@ jobs:
         run: |
           wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install ./google-chrome-stable_current_amd64.deb
-          wget --quiet http://chromedriver.storage.googleapis.com/90.0.4430.24/chromedriver_linux64.zip
+          wget --quiet http://chromedriver.storage.googleapis.com/91.0.4472.101/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
       - name: Run tests against local Chrome
         run: |
@@ -71,7 +71,7 @@ jobs:
   test-chrome-grid:
     runs-on: ubuntu-latest
     container:
-      image: maven:3.8.1-jdk-11
+      image: maven:3.8-jdk-11
     env:
       HUB_HOST: hub
       THREAD_COUNT: 2
@@ -122,7 +122,7 @@ jobs:
   test-firefox-grid:
     runs-on: ubuntu-latest
     container:
-      image: maven:3.8.1-jdk-11
+      image: maven:3.8-jdk-11
     env:
       HUB_HOST: hub
       THREAD_COUNT: 2
@@ -177,3 +177,33 @@ jobs:
           path: logs/
           retention-days: 7
       - uses: codecov/codecov-action@v1
+
+  sonar:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Setup JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: Cache Sonar packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyse
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B test-compile surefire:test org.sonarsource.scanner.maven:sonar-maven-plugin:sonar

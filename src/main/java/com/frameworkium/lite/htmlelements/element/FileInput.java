@@ -35,8 +35,7 @@ public class FileInput extends TypifiedElement {
         // Set local file detector in case of remote driver usage
         setLocalFileDetectorIfRequired();
 
-        String filePath = getFilePath(fileName);
-        sendKeys(filePath);
+        sendKeys(getFilePath(fileName));
     }
 
     /**
@@ -69,6 +68,7 @@ public class FileInput extends TypifiedElement {
     /**
      * Submits selected file by simply submitting the whole form, which contains this file input.
      */
+    @Override
     public void submit() {
         getWrappedElement().submit();
     }
@@ -85,7 +85,6 @@ public class FileInput extends TypifiedElement {
     }
 
     private String getPathForSystemFile(final String fileName) {
-        File file = new File(fileName);
-        return file.getPath();
+        return new File(fileName).getPath();
     }
 }

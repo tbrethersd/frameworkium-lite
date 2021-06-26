@@ -113,6 +113,7 @@ public class UITestLifecycle {
     public void afterTestSuite() {
         driverLifecycle.tearDownDriverPool();
         ScreenshotCapture.processRemainingBacklog();
+        THREAD_LOCAL_INSTANCE.remove();
     }
 
     /**
