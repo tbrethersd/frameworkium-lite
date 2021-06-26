@@ -30,6 +30,10 @@ public class FrameworkiumBugsTest extends BaseUITest {
         logger.info("Using BaseUITest logger");
         SeleniumDownloadPage.open().log();
     }
+    
+    public void use_base_page_visibility() {
+        SeleniumDownloadPage.open().waitForContent();
+    }
 
     @Test(dependsOnMethods = {"use_various_loggers"})
     public void ensure_BaseUITest_wait_is_updated_after_browser_reset() {
