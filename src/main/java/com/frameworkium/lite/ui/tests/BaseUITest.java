@@ -40,7 +40,19 @@ public abstract class BaseUITest {
      */
     @BeforeMethod(alwaysRun = true)
     protected void configureBrowserBeforeTest(Method testMethod) {
-        UITestLifecycle.get().beforeTestMethod(testMethod);
+        var maxRetries = 1;
+        var count = 0;
+        while(true) {
+            try {
+                UITestLifecycle.get().beforeTestMethod(testMethod);
+                return;
+            }
+            catch(NullPointerException exception) {
+                logger.info("Caught Null Pointer Exception");
+                if (count++ == maxRetries) throw exception;
+
+            }
+        }
     }
 
     /**
