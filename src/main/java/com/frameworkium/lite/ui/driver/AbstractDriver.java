@@ -20,7 +20,7 @@ public abstract class AbstractDriver implements Driver {
 
     @Override
     public EventFiringWebDriver getWebDriver() {
-        return this.webDriverWrapper;
+        return null;
     }
 
     /** Creates the Wrapped Driver object and maximises if required. */
